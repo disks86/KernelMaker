@@ -7,15 +7,15 @@ namespace KernelMakerLibrary;
 public class CodeFileSet
 {
     /// <summary>
-    /// The object files related to the kernel.
+    /// The type files related to the kernel.
     /// </summary>
     [DataMember]
-    public List<CodeFile> ObjectCodeFiles { get; set; }
+    public List<CodeFile> TypeCodeFiles { get; set; } = new();
     /// <summary>
     /// The function files related to the kernel.
     /// </summary>
     [DataMember]
-    public List<CodeFile> FunctionCodeFiles { get; set; }
+    public List<CodeFile> FunctionCodeFiles { get; set; } = new();
     
     public override string ToString()
     {

@@ -5,7 +5,7 @@ namespace KernelMakerLibrary;
 public class BasicRemoteCodeFileProvider
     : IRemoteCodeFileProvider
 {
-    public void DownloadRemoteCodeFiles(UserOptions userOptions)
+    public async void DownloadRemoteCodeFiles(UserOptions userOptions)
     {
         var remotePackageCachePath = userOptions.RemotePackageCachePath;
         if (remotePackageCachePath != null)
@@ -15,10 +15,11 @@ public class BasicRemoteCodeFileProvider
                 var filename = Path.Join(remotePackageCachePath, remotePackage.Name.Replace(':', Path.PathSeparator));
                 if (!File.Exists(filename))
                 {
-                    using (var client = new WebClient())
-                    {
-                        client.DownloadFile("http://example.com/file/song/a.mpeg", filename);
-                    }
+                    using HttpClient client = new HttpClient();
+                    using var response = await client.GetAsync(remotePackage.Url);
+                    await using var urlStream = await response.Content.ReadAsStreamAsync();
+                    await using var fileStream = new FileStream(filename,FileMode.Create);
+                    await urlStream.CopyToAsync(fileStream);
                 }
             }
         }

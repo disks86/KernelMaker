@@ -2,6 +2,6 @@
 
 public class KernelDefinition
 {
-    public List<ObjectDefinition> ObjectDefinitions { get; set; } = new List<ObjectDefinition>();
+    public List<TypeDefinition> TypeDefinitions { get; set; } = new();
     
 }

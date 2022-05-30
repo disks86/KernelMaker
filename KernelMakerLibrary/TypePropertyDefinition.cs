@@ -3,7 +3,7 @@
 /// <summary>
 /// A single property/field of an object definition.
 /// </summary>
-public class ObjectPropertyDefinition
+public class TypePropertyDefinition
 {
     /// <summary>
     /// The name of the property/field.
@@ -14,7 +14,7 @@ public class ObjectPropertyDefinition
     /// </summary>
     public string Type { get; set; }
 
-    ObjectPropertyDefinition(string name, string type)
+    TypePropertyDefinition(string name, string type)
     {
         Name = name;
         Type = type;

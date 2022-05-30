@@ -9,35 +9,35 @@ public class BasicCodeFileProvider
 
         CodeFileSet codeFileSet = new();
 
-        var objectFiles = Directory.GetFiles(rootPath, "*.odef", SearchOption.AllDirectories);
-        foreach (var objectFile in objectFiles)
+        var typeFiles = Directory.GetFiles(rootPath, "*.tdef", SearchOption.AllDirectories);
+        foreach (var typeFile in typeFiles)
         {
-            var name = objectFile.Replace(rootPath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
-            codeFileSet.ObjectCodeFiles.Add(new CodeFile(name, File.ReadAllText(objectFile)));
+            var name = typeFile.Replace(rootPath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
+            codeFileSet.TypeCodeFiles.Add(new CodeFile(name, File.ReadAllText(typeFile)));
         }
 
         var functionFiles = Directory.GetFiles(rootPath, "*.fdef", SearchOption.AllDirectories);
         foreach (var functionFile in functionFiles)
         {
             var name = functionFile.Replace(rootPath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
-            codeFileSet.ObjectCodeFiles.Add(new CodeFile(name, File.ReadAllText(functionFile)));
+            codeFileSet.FunctionCodeFiles.Add(new CodeFile(name, File.ReadAllText(functionFile)));
         }
 
         var remotePackageCachePath = userOptions.RemotePackageCachePath;
         if (remotePackageCachePath != null)
         {
-            var remoteObjectFiles = Directory.GetFiles(remotePackageCachePath, "*.odef", SearchOption.AllDirectories);
-            foreach (var remoteObjectFile in remoteObjectFiles)
+            var remoteTypeFiles = Directory.GetFiles(remotePackageCachePath, "*.tdef", SearchOption.AllDirectories);
+            foreach (var remoteTypeFile in remoteTypeFiles)
             {
-                var name = remoteObjectFile.Replace(remotePackageCachePath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
-                codeFileSet.ObjectCodeFiles.Add(new CodeFile(name, File.ReadAllText(remoteObjectFile)));
+                var name = remoteTypeFile.Replace(remotePackageCachePath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
+                codeFileSet.TypeCodeFiles.Add(new CodeFile(name, File.ReadAllText(remoteTypeFile)));
             }
 
             var remoteFunctionFiles = Directory.GetFiles(remotePackageCachePath, "*.fdef", SearchOption.AllDirectories);
             foreach (var remoteFunctionFile in remoteFunctionFiles)
             {
                 var name = remoteFunctionFile.Replace(remotePackageCachePath, "").Replace(Path.PathSeparator, ':').Split(".")[0];
-                codeFileSet.ObjectCodeFiles.Add(new CodeFile(name, File.ReadAllText(remoteFunctionFile)));
+                codeFileSet.FunctionCodeFiles.Add(new CodeFile(name, File.ReadAllText(remoteFunctionFile)));
             }
         }
 
