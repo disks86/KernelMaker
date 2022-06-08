@@ -21,6 +21,21 @@ public class UserOptions
     public string? RootPath { get; set; }
 
     /// <summary>
+    /// The location to put temporary files.
+    /// </summary>
+    public string? TempPath { get; set; }
+
+    /// <summary>
+    /// The location to put output files.
+    /// </summary>
+    public string? OutputPath { get; set; }
+    
+    /// <summary>
+    /// The location to put log files.
+    /// </summary>
+    public string? LogPath { get; set; }
+    
+    /// <summary>
     /// The path to the local copy of remote packages.
     /// </summary>
     public string? RemotePackageCachePath { get; set; }

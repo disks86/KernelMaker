@@ -3,14 +3,20 @@
 using KernelMakerLibrary;
 using Serilog;
 
+var userOptionProvider = UserOptionProviderFactory.GetProvider();
+var userOptions = userOptionProvider.GetUserOptions();
+
+userOptions.RootPath = Path.Join(Environment.CurrentDirectory, "Sample");
+
 using var log = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 Log.Logger = log;
+
+//TODO: use log file path from user options for output log files.
+
 Log.Information("The global logger has been configured");
 
-var userOptionProvider = UserOptionProviderFactory.GetProvider();
-var userOptions = userOptionProvider.GetUserOptions();
 Parser parser = new(userOptions);
 
 parser.Parse();

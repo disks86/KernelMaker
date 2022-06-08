@@ -16,4 +16,11 @@
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Sample\Init.fdef" />
+      <Content Include="Sample\Init.fdef">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
