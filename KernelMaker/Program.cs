@@ -19,6 +19,6 @@ Log.Information("The global logger has been configured");
 
 Parser parser = new(userOptions);
 
-parser.Parse();
+var kernelDefinition = parser.Parse();
 
 Console.ReadLine();

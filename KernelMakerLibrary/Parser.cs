@@ -145,6 +145,10 @@ public class Parser
                         case FunctionCodeLocation.FunctionBody:
                             functionDefinition.RawMethodBody += character;
                             break;
+                        case FunctionCodeLocation.BeforeLanguageType:
+                            break;
+                        case FunctionCodeLocation.LanguageType:
+                            break;
                         default:
                             Log.Warning(
                                 "Unhandled token {Character} when location type was {FunctionCodeLocation} as position {Position} on line {LineNumber}",
@@ -178,6 +182,9 @@ public class Parser
                 case ')':
                     switch (functionCodeLocation)
                     {
+                        case FunctionCodeLocation.BeforeFunctionArgumentType:
+                            functionCodeLocation = FunctionCodeLocation.BeforeLanguageType;
+                            break;                        
                         case FunctionCodeLocation.FunctionArgumentName:
                             if (!string.IsNullOrWhiteSpace(functionArgument.ArgumentName) &&
                                 !string.IsNullOrWhiteSpace(functionArgument.ArgumentType))
@@ -281,6 +288,11 @@ public class Parser
                             }
                             else
                             {
+                                if (!string.IsNullOrWhiteSpace(functionDefinition.RawMethodBody))
+                                {
+                                    kernelDefinition.FunctionDefinitions.Add(functionDefinition);
+                                }
+                                functionDefinition = new();
                                 functionCodeLocation = FunctionCodeLocation.BeforeReturnType;
                             }
 
@@ -305,6 +317,8 @@ public class Parser
                     }
 
                     break;
+                case '\r':
+                    break;
                 case '\n':
                     switch (functionCodeLocation)
                     {
@@ -314,6 +328,9 @@ public class Parser
                             break;
                         case FunctionCodeLocation.FunctionBody:
                             functionDefinition.RawMethodBody += character;
+                            break;
+                        case FunctionCodeLocation.LanguageType:
+                            //functionDefinition.RawMethodBody += character;
                             break;
                         default:
                             Log.Warning(
