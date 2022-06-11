@@ -6,8 +6,6 @@ using Serilog;
 var userOptionProvider = UserOptionProviderFactory.GetProvider();
 var userOptions = userOptionProvider.GetUserOptions();
 
-userOptions.RootPath = Path.Join(Environment.CurrentDirectory, "Sample");
-
 using var log = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
