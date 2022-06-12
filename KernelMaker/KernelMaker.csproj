@@ -18,7 +18,15 @@
 
     <ItemGroup>
       <None Remove="Sample\Init.fdef" />
-      <Content Include="Sample\Init.fdef">
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Sample\RegistryMap.tdef" />
+      <Content Include="Sample\RegistryMap.tdef">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Sample\Boot.fdef" />
+      <Content Include="Sample\Boot.fdef">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

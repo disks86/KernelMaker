@@ -19,4 +19,8 @@ Parser parser = new(userOptions);
 
 var kernelDefinition = parser.Parse();
 
+var assemblyGenerator = new AssemblyGenerator();
+
+assemblyGenerator.GenerateAssembly(userOptions, kernelDefinition);
+
 Console.ReadLine();

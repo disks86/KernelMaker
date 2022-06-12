@@ -1,4 +1,4 @@
-﻿void Init() Assembly-x86 
+﻿void Boot() Assembly-x86 
 {
     .set ALIGN,    1<<0 
     .set MEMINFO,  1<<1
@@ -33,7 +33,7 @@
     .size _start, . - _start
 }
 
-void kernel_main() TBD
+void kernel_main() HLKL
 {
     int i = 0;
     i++;
@@ -46,7 +46,7 @@ void kernel_main() TBD
     return;
 }
 
-void Test() English
+void Test() NLKL
 {
     Declare "i" with a value of 0.
     increment the value of "i".

@@ -10,6 +10,8 @@ public class FunctionDefinition
     public FunctionSignature FunctionSignature { get; set; } = new();
     public string RawMethodBody { get; set; } = string.Empty;
     public string FunctionLanguage { get; set; } = string.Empty;
+
+    public string AssemblyLabel { get; set; } = string.Empty;
     
     public override string ToString()
     {
