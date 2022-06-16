@@ -22,12 +22,33 @@ public class AssemblyGenerator
     
     public void GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition)
     {
-        foreach (var functionDefinition in kernelDefinition.FunctionDefinitions)
-        {
-            foreach (var languageHandler in LanguageHandlers)
+        var invalidPathChars = Path.GetInvalidPathChars();
+        
+        Parallel.ForEach(kernelDefinition.FunctionDefinitions,
+            functionDefinition =>
             {
-                languageHandler.GenerateAssembly(userOptions, kernelDefinition, functionDefinition);
-            }
-        }
+                if (functionDefinition.FunctionSignature.Name.IndexOfAny(invalidPathChars) >= 0)
+                {
+                    throw new ArgumentException($"Function name '{functionDefinition.FunctionSignature.Name}' contains invalid characters.");
+                }
+      
+                if (functionDefinition.FunctionSignature.ReturnType.IndexOfAny(invalidPathChars) >= 0)
+                {
+                    throw new ArgumentException($"Function return type '{functionDefinition.FunctionSignature.ReturnType}' contains invalid characters.");
+                }
+
+                foreach (var functionArgument in functionDefinition.FunctionSignature.FunctionArguments)
+                {
+                    if (functionArgument.ArgumentType.IndexOfAny(invalidPathChars) >= 0)
+                    {
+                        throw new ArgumentException($"Function argument type '{functionArgument.ArgumentType}' contains invalid characters.");
+                    } 
+                }
+                
+                foreach (var languageHandler in LanguageHandlers)
+                {
+                    languageHandler.GenerateAssembly(userOptions, kernelDefinition, functionDefinition);
+                }
+            });
     }
 }

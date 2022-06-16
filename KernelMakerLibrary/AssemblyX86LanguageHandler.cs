@@ -22,8 +22,7 @@ public class AssemblyX86LanguageHandler
                     Directory.CreateDirectory(userOptions.TempPath);
                 }
                 
-                var filename = Path.Join(userOptions.TempPath,
-                    string.Concat(functionDefinition.FunctionSignature.Name, ".s"));
+                var filename = Path.Join(userOptions.TempPath,"Boot.s");
                 
                 File.WriteAllText(filename, functionDefinition.RawMethodBody);
             }
@@ -33,11 +32,6 @@ public class AssemblyX86LanguageHandler
                 {
                     Directory.CreateDirectory(userOptions.TempPath);
                 }
-                
-                var filename = Path.Join(userOptions.TempPath,
-                    string.Concat(functionDefinition.FunctionSignature.Name, ".s"));
-
-                //TODO revisit
                 
                 var labelBuilder = new StringBuilder(functionDefinition.FunctionSignature.Name.Length +
                                                      functionDefinition.FunctionSignature.ReturnType.Length +
@@ -55,6 +49,9 @@ public class AssemblyX86LanguageHandler
                 labelBuilder.Append(functionDefinition.FunctionSignature.ReturnType);
                 functionDefinition.AssemblyLabel = labelBuilder.ToString();
 
+                var filename = Path.Join(userOptions.TempPath,
+                    string.Concat(functionDefinition.AssemblyLabel, ".s"));
+                
                 var sb = new StringBuilder(functionDefinition.RawMethodBody.Length + 40);
                 sb.Append(".section .text\n");
                 sb.Append(".globl ");
@@ -64,6 +61,7 @@ public class AssemblyX86LanguageHandler
                 sb.Append(':');
                 sb.Append('\n');
                 sb.Append(functionDefinition.RawMethodBody);
+                
                 File.WriteAllText(filename,sb.ToString());
             }
         }
