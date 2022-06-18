@@ -33,22 +33,6 @@ public class AssemblyX86LanguageHandler
                     Directory.CreateDirectory(userOptions.TempPath);
                 }
                 
-                var labelBuilder = new StringBuilder(functionDefinition.FunctionSignature.Name.Length +
-                                                     functionDefinition.FunctionSignature.ReturnType.Length +
-                                                     (functionDefinition.FunctionSignature.FunctionArguments.Count *
-                                                      20));
-                labelBuilder.Append('_');
-                labelBuilder.Append(functionDefinition.FunctionSignature.Name);
-                labelBuilder.Append('_');
-                labelBuilder.Append(functionDefinition.FunctionSignature.ReturnType);
-                foreach (var functionArgument in functionDefinition.FunctionSignature.FunctionArguments)
-                {
-                    labelBuilder.Append('_');
-                    labelBuilder.Append(functionArgument.ArgumentType);                    
-                }
-                labelBuilder.Append(functionDefinition.FunctionSignature.ReturnType);
-                functionDefinition.AssemblyLabel = labelBuilder.ToString();
-
                 var filename = Path.Join(userOptions.TempPath,
                     string.Concat(functionDefinition.AssemblyLabel, ".s"));
                 

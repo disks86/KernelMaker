@@ -1,10 +1,12 @@
-﻿namespace KernelMakerLibrary;
+﻿using Serilog;
+
+namespace KernelMakerLibrary;
 
 public class AssemblyGenerator
 {
-    private readonly List<ILanguageHandler> LanguageHandlers = new();
+    private static readonly List<ILanguageHandler> LanguageHandlers = new();
 
-    public AssemblyGenerator()
+    static AssemblyGenerator()
     {
         var type = typeof(ILanguageHandler);
         var languageHandlerTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -12,18 +14,34 @@ public class AssemblyGenerator
             .Where(p => type.IsAssignableFrom(p) && type != p);
         foreach (var languageHandlerType in languageHandlerTypes)
         {
-            var languageHandler = Activator.CreateInstance(languageHandlerType) as ILanguageHandler;
-            if (languageHandler!=null)
+            if (Activator.CreateInstance(languageHandlerType) is ILanguageHandler languageHandler)
             {
                 LanguageHandlers.Add(languageHandler);
             }
         }
     }
     
-    public void GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition)
+    /// <summary>
+    /// The options provided by the user.
+    /// </summary>
+    public UserOptions UserOptions { get; set; }
+    
+    /// <summary>
+    /// The script runner for executing user provided scripts.
+    /// </summary>
+    public ScriptRunner ScriptRunner { get; set; }
+    
+    public AssemblyGenerator(UserOptions userOptions, ScriptRunner scriptRunner)
+    {
+        UserOptions = userOptions;
+        ScriptRunner = scriptRunner;
+    }
+    
+    public void GenerateAssembly(KernelDefinition kernelDefinition)
     {
         var invalidPathChars = Path.GetInvalidPathChars();
-        
+
+        Log.Information("Generating assembly for functions");
         Parallel.ForEach(kernelDefinition.FunctionDefinitions,
             functionDefinition =>
             {
@@ -47,7 +65,7 @@ public class AssemblyGenerator
                 
                 foreach (var languageHandler in LanguageHandlers)
                 {
-                    languageHandler.GenerateAssembly(userOptions, kernelDefinition, functionDefinition);
+                    languageHandler.GenerateAssembly(UserOptions, kernelDefinition, functionDefinition);
                 }
             });
     }

@@ -29,6 +29,10 @@
       <Content Include="Sample\Boot.fdef">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Sample\PackageManager.py" />
+      <Content Include="Sample\PackageManager.py">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

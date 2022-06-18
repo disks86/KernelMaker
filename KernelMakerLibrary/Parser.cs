@@ -1,4 +1,5 @@
 ﻿using System.Security;
+using System.Text;
 using Serilog;
 
 namespace KernelMakerLibrary;
@@ -20,9 +21,15 @@ public class Parser
     /// </summary>
     public IRemoteCodeFileProvider RemoteCodeFileProvider { get; set; }
 
-    public Parser(UserOptions userOptions)
+    /// <summary>
+    /// The script runner for executing user provided scripts.
+    /// </summary>
+    public ScriptRunner ScriptRunner { get; set; }
+    
+    public Parser(UserOptions userOptions, ScriptRunner scriptRunner)
     {
         UserOptions = userOptions;
+        ScriptRunner = scriptRunner;
         CodeFileProvider = CodeFileProviderFactory.GetProvider(userOptions);
         RemoteCodeFileProvider = RemoteCodeFileProviderFactory.GetProvider(userOptions);
     }
@@ -46,16 +53,20 @@ public class Parser
 
     public KernelDefinition Parse()
     {
+        Log.Information("Downloading remote code files");
         RemoteCodeFileProvider.DownloadRemoteCodeFiles(UserOptions);
-
+        ScriptRunner.Run("DownloadRemoteCodeFiles");
+        
         var codeFiles = CodeFileProvider.GetCodeFiles(UserOptions);
         Log.Information("{CodeFiles}", codeFiles);
 
         KernelDefinition kernelDefinition = new();
 
+        Log.Information("Parsing function code files");
         Parallel.ForEach(codeFiles.FunctionCodeFiles,
             functionCodeFile => { ParseFunctionCodeFile(kernelDefinition, functionCodeFile); });
 
+        Log.Information("Parsing object code files");
         Parallel.ForEach(codeFiles.TypeCodeFiles,
             typeCodeFile => { ParseTypeCodeFile(kernelDefinition, typeCodeFile); });
 
@@ -290,6 +301,22 @@ public class Parser
                             {
                                 if (!string.IsNullOrWhiteSpace(functionDefinition.RawMethodBody))
                                 {
+                                    var labelBuilder = new StringBuilder(functionDefinition.FunctionSignature.Name.Length +
+                                                                         functionDefinition.FunctionSignature.ReturnType.Length +
+                                                                         (functionDefinition.FunctionSignature.FunctionArguments.Count *
+                                                                          20));
+                                    labelBuilder.Append('_');
+                                    labelBuilder.Append(functionDefinition.FunctionSignature.Name);
+                                    labelBuilder.Append('_');
+                                    labelBuilder.Append(functionDefinition.FunctionSignature.ReturnType);
+                                    foreach (var af in functionDefinition.FunctionSignature.FunctionArguments)
+                                    {
+                                        labelBuilder.Append('_');
+                                        labelBuilder.Append(af.ArgumentType);                    
+                                    }
+                                    labelBuilder.Append(functionDefinition.FunctionSignature.ReturnType);
+                                    functionDefinition.AssemblyLabel = labelBuilder.ToString();
+                                    
                                     kernelDefinition.FunctionDefinitions.Add(functionDefinition);
                                 }
                                 functionDefinition = new();
@@ -331,6 +358,8 @@ public class Parser
                             break;
                         case FunctionCodeLocation.LanguageType:
                             //functionDefinition.RawMethodBody += character;
+                            break;
+                        case FunctionCodeLocation.BeforeReturnType:
                             break;
                         default:
                             Log.Warning(
