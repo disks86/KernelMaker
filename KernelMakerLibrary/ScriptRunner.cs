@@ -61,7 +61,14 @@ public class ScriptRunner
                 SearchOption.AllDirectories));
         foreach (var pythonFile in pythonFiles)
         {
-            PythonScriptScope = PythonScriptEngine.ExecuteFile(pythonFile, PythonScriptScope);
+            try
+            {
+                PythonScriptScope = PythonScriptEngine.ExecuteFile(pythonFile, PythonScriptScope);
+            }
+            catch (Exception e)
+            {
+               Log.Error(e,"Python script failed");
+            }
         }
 
         var output = Encoding.Default.GetString(streamOut.ToArray());
