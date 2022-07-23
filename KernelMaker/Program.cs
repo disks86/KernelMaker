@@ -4,6 +4,6 @@ using KernelMakerLibrary;
 
 var compiler = new Compiler();
 
-var result = compiler.Compile();
+compiler.Run();
 
-Console.ReadLine();
+//Console.ReadLine();

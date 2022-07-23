@@ -1,40 +1,56 @@
 ﻿using System.Text;
+using Serilog;
 
 namespace KernelMakerLibrary;
 
 public class AssemblyX86LanguageHandler
     : ILanguageHandler
 {
-    public void GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition,
+    public string GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition,
         FunctionDefinition functionDefinition)
     {
+        string filename = string.Empty;
+        string output = string.Empty;
+        
         if (string.IsNullOrWhiteSpace(userOptions.TempPath))
         {
             throw new Exception("Missing temporary directory");
+        }
+        
+        if (!Directory.Exists(userOptions.TempPath))
+        {
+            Directory.CreateDirectory(userOptions.TempPath);
         }
         
         if (userOptions.TargetArchitecture is "x86" && functionDefinition.FunctionLanguage.Equals("Assembly-x86"))
         {
             if (functionDefinition.FunctionSignature.Name.Equals("Boot"))
             {
-                if (!Directory.Exists(userOptions.TempPath))
+                filename = Path.Join(userOptions.TempPath,"Boot.asm");
+
+                kernelDefinition.BootFilename = filename;
+                
+                var sb = new StringBuilder(functionDefinition.RawMethodBody.Length + 40);
+                using var stringReader = new StringReader(functionDefinition.RawMethodBody);
+                while (true)
                 {
-                    Directory.CreateDirectory(userOptions.TempPath);
+                    var line = stringReader.ReadLine();
+                    if (line!=null)
+                    {
+                        sb.Append(line/*.Trim()*/);
+                        sb.Append('\n');
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                
-                var filename = Path.Join(userOptions.TempPath,"Boot.s");
-                
-                File.WriteAllText(filename, functionDefinition.RawMethodBody);
+                output = sb.ToString();
             }
             else
             {
-                if (!Directory.Exists(userOptions.TempPath))
-                {
-                    Directory.CreateDirectory(userOptions.TempPath);
-                }
-                
-                var filename = Path.Join(userOptions.TempPath,
-                    string.Concat(functionDefinition.AssemblyLabel, ".s"));
+                filename = Path.Join(userOptions.TempPath,
+                    string.Concat(functionDefinition.AssemblyLabel, ".asm"));
                 
                 var sb = new StringBuilder(functionDefinition.RawMethodBody.Length + 40);
                 sb.Append(".section .text\n");
@@ -46,8 +62,15 @@ public class AssemblyX86LanguageHandler
                 sb.Append('\n');
                 sb.Append(functionDefinition.RawMethodBody);
                 
-                File.WriteAllText(filename,sb.ToString());
+                output = sb.ToString();
             }
         }
+
+        if (!string.IsNullOrWhiteSpace(output))
+        {
+            File.WriteAllText(filename,output); 
+        }
+
+        return filename;
     }
 }

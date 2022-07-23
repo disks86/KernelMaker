@@ -2,6 +2,6 @@
 
 public interface ILanguageHandler
 {
-    public void GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition,
+    public string GenerateAssembly(UserOptions userOptions, KernelDefinition kernelDefinition,
         FunctionDefinition functionDefinition);
 }

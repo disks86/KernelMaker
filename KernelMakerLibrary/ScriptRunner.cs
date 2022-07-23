@@ -57,7 +57,7 @@ public class ScriptRunner
         PythonScriptEngine.Runtime.IO.SetErrorOutput(streamErr, Encoding.Default);
 
         var pythonFiles = Directory.GetFiles(UserOptions.RootPath, "*.py", SearchOption.AllDirectories).Union(
-            Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "*.py",
+            Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "*.py",
                 SearchOption.AllDirectories));
         foreach (var pythonFile in pythonFiles)
         {

@@ -8,7 +8,7 @@ using Serilog;
 
 public class Compiler
 {
-    public KernelDefinition? Compile()
+    public KernelDefinition? Run(bool executeAfterBuild = true)
     {
         KernelDefinition? kernelDefinition = null;
         
@@ -32,12 +32,19 @@ public class Compiler
 
             kernelDefinition = parser.Parse();
             assemblyGenerator.GenerateAssembly(kernelDefinition);
+
+            var assembler = AssemblerFactory.GetAssembler(userOptions);
+            assembler.Execute(kernelDefinition);
+            
+            var imageBuilder = ImageBuilderFactory.GetImageBuilder(userOptions);
+            imageBuilder.Execute(kernelDefinition);
         }
         catch (Exception e)
         {
             Log.Error(e,"Compile failed");
         }
-
+        
         return kernelDefinition;
     }
+
 }

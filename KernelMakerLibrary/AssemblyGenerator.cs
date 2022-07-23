@@ -65,7 +65,12 @@ public class AssemblyGenerator
                 
                 foreach (var languageHandler in LanguageHandlers)
                 {
-                    languageHandler.GenerateAssembly(UserOptions, kernelDefinition, functionDefinition);
+                    string filename = languageHandler.GenerateAssembly(UserOptions, kernelDefinition, functionDefinition);
+                    if (!string.IsNullOrWhiteSpace(filename))
+                    {
+                        Log.Information("Wrote {@Filename} to disk",filename);
+                        kernelDefinition.AssemblyFiles.Add(filename);
+                    }
                 }
             });
     }
